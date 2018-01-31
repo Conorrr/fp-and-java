@@ -1,0 +1,429 @@
+:revealjs_theme: beige
+:revealjs_history: true
+:revealjs_transition: convex
+= Functional Programming and Java
+Conor Restall <conor@restall.io>
+2018-01-31
+
+== Intro
+* Ask questions as I go
+* If you are reading these slides press `S` to view my speaker notes.
+* Function Programming is a huge topic
+
+[NOTE.speaker]
+--
+Very high level and brief
+
+Teaching principles - could go into much more detail.
+
+FP is huge,  thousands of languages and language features , I'm only going to touch on a couple of these
+
+Java 8 made much of this feasible
+
+I'm not going to talk about recursion - it's common in lots of FP languages, but the JVM doesn't offer tail call optimisation.
+
+I'll say some outlandish things - please shout up when I do
+
+I'm going to try and stay away from category theory, but I will inevitably touch on it.
+You'll find some people when they try to teach FP will talk in a very Mathematical way. f(x) applied to g(x,y)
+
+Probably not going to teach you much that is directly applyable, I will hopefully provoke some thought
+--
+
+== Imperative Programming
+
+* Before we start looking at FP lets have a very quick look at imperative programming.
+
+[source, java]
+----
+a = a + 1;
+----
+
+[NOTE.speaker]
+--
+Imperative programming is lots about how.
+
+a = a + 1
+
+is probably the simplest thing you can do in imperative programming, and it's ridiculously complex for what it is.
+Try explaining this to someone who has never programmed before.
+
+equals(=) is not an equals sign, it's assignment.
+
+a is referenced twice in the same line and has 2 different meanings. It's unintuitive
+
+This doesn't don't have any effect until after it runs
+
+Now stick this in a loop, our state is constantly changing and our locaton is constantly changing and we have to train our minds to be able to understand this
+
+Who here has experienced an off by 1 error and has to manually write out each step of a loop
+
+Imagine if we could take time out of out code.
+--
+
+== What is Functional Programming?
+
+Process of building your software using "pure functions"
+
+[NOTE.speaker]
+--
+Functional programming aims to complex solve problems by first decomposing the problem into smaller simpler problems solving these problems and recomposing these solutions.
+--
+
+=== Pure Functions
+
+Pure functions are functions that don't have side effects
+
+Pure functions are functions that don't:
+
+* Modify variables
+* Modify data structures in place
+* Throw exceptions
+* Print to the console or read user input
+* Read from or write to files
+
+[NOTE.speaker]
+--
+**What are pure functions?** - functions that always give the same answer given the same parameters
+
+These are restrictions and add complexity, that's why we want to get rid of them.
+
+At this point you're either thinking ah programming will be so easy without any of these annoying side effects, or you're thinking how can we make anything useful without side effects.
+
+Functional programming accepts these and different languages ways of managing side effects.
+
+I just want to look at how we can make as much of our applications functional and push the side effects to the edges.
+
+Preference for immutable data
+--
+
+== Benefits of Functional Programming
+
+* Less incidental Complexity
+* Easier to reason about
+* Innate Reusability via Composability
+* Easier Testing
+* Concurrency made easy
+* Less Errors
+* Easier to Debug (small area to debug, lower cognitive load)
+
+[NOTE.speaker]
+--
+These are all pretty interelated
+
+Complexity (there are 2 types of complexity incidental and inherent)
+
+In OOP to make things extensible, dynamic and flexible you have to make them more complex
+You have to add something
+
+In Functional programming things are inherently flexible
+Everything is a functional
+
+Complexity has lots of cost, it's hard to think about lots of things at once.
+
+This is what things like the Single Responsibility Principle aim to address
+
+You can't rely only tests.
+If you want to make a change to a piece of software you have to go in an understand what already exists and be able to understand the impacts
+
+Rich Hickey has a brilliant talk about complexity - go watch it
+--
+
+== Immutability
+* Item 17 In Josh Bloch's Effective Java - Minimize Mutability
+* Removal of state (internal + external)
+* Simple
+* Sharable
+* Composable
+* Easier to reason about
+* More memory intensive
+
+[NOTE.speaker]
+--
+Java is not particularly friendly towards immutability.
+The only tool we are offered is final.
+
+Josh Bloch is speaking about Immutable fields. FP takes this further and says nothing should be mutable.
+
+FP takes this further - minimising assignment - getting rid of reassignment
+
+Immutable values are simple, can be shared, easier to reason about, Composable
+
+Take more memory, vast majority of the time this is negligible
+
+Streams don't create new lists every time you go through a step
+--
+
+=== Persistent Data Structures
+Default Collections are hard to make immutable and they are not well handled.
+E.G. Impossible to add to a collection in a immutable way using Java Collection Interface.
+
+People have created "Persistent Data Structures"
+
+[NOTE.speaker]
+--
+What about Lists, Sets, Maps etc.. Making these immutable make them hard to work with and slow
+
+Preserve the existing structures when mutations are made.
+--
+
+=== Java Collections
+
+[source, java]
+----
+public interface List<T> {
+
+  public boolean add(E element)
+
+  public E remove(E element)
+}
+----
+
+=== VAVR Collections
+
+O(Log~32~)
+
+[source, java]
+----
+public interface List<T> {
+
+  public List<T> add(E element)
+
+  public List<T> remove(E element)
+}
+----
+
+
+[NOTE.speaker]
+--
+Can have a dumb implementation that clones the entire structure. Really not efficent.
+
+Smart implementations that run in  time (close enough to linear)
+
+Some other implementations that offer slightly better performance at the cost of old collections.
+--
+
+== Monads
+* A monad a set of three things:
+
+* a parameterized type M<T>
+* a “unit” function T -> M<T>
+* a “bind” operation: M<T> bind T -> U = M<U>
+
+[NOTE.speaker]
+--
+Many people have probably heard of monads and think their really confusing and scary, in fact they are simple ways of handling complex things.
+
+You have a Type and want to express something about this T without changing the Type. E.G. You want to express that this thing may not exist, or that it may be invalid
+
+Think of a monad as a wrapper that can respresent multiple stateas and some useful utilities
+
+A "unit" is just a way of saying a way (or multiple ways) to create an instance of the Monad category theory
+
+A "bind" is a transformation on the internal type
+
+They usually have lots of other useful and lovely things like flatmap
+--
+
+=== Optional
+Probably the most common Monad in java
+
+[NOTE.speaker]
+--
+Parameterized type - Optional can take a type
+
+unit = Optional::of
+
+bind = Optional::map
+
+Monad abstracts represent possible state
+--
+
+=== Other Monads
+* Try
+* Lazy
+* Trampoline
+* Future
+
+[NOTE.speaker]
+--
+Try - an alternative for checked exceptions, the contents is either
+
+Lazy - Represent a value that may or may not have been calculated
+
+Trampoline - a pretty complex one that is used as an alternative to recursion
+
+Future - Represent a value that may or may not exist
+--
+
+== Streams
+
+Biggest new feature in Java 8
+
+Common loops can be extracted away
+
+[NOTE.speaker]
+--
+Many functional languages have recursion to manage looping. Java lacks tail call optimisation so it's not really feasible.
+--
+=== Better stream libraries
+* VAVR
+* JOOλ (JOOL)
+
+[NOTE.speaker]
+--
+There are some others
+
+Offer more flexibility, support for Tuples, better fold, filter
+--
+
+=== Lazy Evaluation
+
+[source, java]
+----
+List<Integer> nums = Arrays.asList(1,2,3);
+
+int[] factor = new int[] {2}; // effectively final
+
+Stream<Integer> stream = nums.stream()
+  .map(n -> n * factor[0]);
+
+factor[0] = 0;
+
+stream.forEach(System.out::println);
+----
+
+[NOTE.speaker]
+--
+What will this print?
+0 0 0
+
+If you don't write the sout line IntelliJ will hint at you that the stream is never consumed
+
+In fact native java streams are a bit funny about consumption and this makes some aspects of them hard to compose, underneath they are mutable collections.
+
+Lazy Evaluation is a byproduct of using pure functions, most functional programming languages take advantages of that.
+E.G. Infinite collections
+--
+
+=== Infinite Collections
+
+I want the sum of the first 20 Fibonacci numbers
+
+[source, java]
+----
+int sum = 2;
+int fibonacci = 1, fibo1 = 1, fibo2 = 1;
+for (int i = 3; i <= 20; i++) {
+    fibonacci = fibo1 + fibo2;
+    fibo1 = fibo2;
+    fibo2 = fibonacci;
+    sum = sum + fibonacci;
+}
+----
+
+[NOTE.speaker]
+--
+Imperatively we would write
+
+We're complecting how and what
+
+This is really quite complex, we're keeping track of a few different things.
+--
+
+=== Declaratively we would write
+
+[source, java]
+----
+// Using VAVR Streams
+  Stream.of(0, 1)
+        .appendSelf(self -> self.zip(self.tail())
+        .map(t -> t._1 + t._2));
+        .filter(20)
+        .sum();
+----
+
+[NOTE.speaker]
+--
+VAVR
+Or Utils.fibonacci()
+        .filter(20)
+        .sum()
+
+It is possible to hang yourself with this, create an infinite stream that goes forever.
+
+After considering the declarative implementation we would probably decide to write a new method that generates our numbers for us.
+E.G. List<Integer> getFibonanacciNumbers(int length); But now we have 2 loops;
+--
+
+== First Class Functions
+Easier to manage from Java 8 onwards (but their just pretty anonymous classes)
+
+[NOTE.speaker]
+--
+Ability to pass functions
+--
+
+=== Comparable
+We have a list of Objects that we want to sort newest to oldest
+
+Traditionally we would implement comparable.
+
+[source, java]
+----
+public int compareTo(FlexibleConfigurations to) {
+  OffsetDateTime lhsDate = AuditHelper.getAuditDTM(this);
+  OffsetDateTime rhsDate = AuditHelper.getAuditDTM(to);
+  if (lhsDate.equals(rhsDate)) {
+    return AuditHelper.getAuditId(this).compareTo(AuditHelper.getAuditId(to));
+  } else {
+    return rhsDate.compareTo(lhsDate);
+  }
+}
+----
+
+[NOTE.speaker]
+--
+Came across this one yesterday
+
+Really good example of leveraging and composing functions
+
+Something you can start doing today.
+--
+
+=== Functional implementation
+
+
+[source, java]
+----
+list.sort(Comparator.comparing(AuditHelper::getAuditDTM)
+                    .reversed()
+                    .thenComparing(AuditHelper::getName)
+         );
+----
+
+[NOTE.speaker]
+--
+We are able to do this because the functions are pure
+--
+
+== Feedback
+I would love some feedback
+
+== Learn more (theory)
+* https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/[Category theory for Programmers]
+* https://mightybyte.github.io/monad-challenges/[Monad challenges]
+* http://hypirion.com/musings/understanding-persistent-vector-pt-1[Details on Persistent Data structures]
+* Anything By Rich Hickey
+
+== Learn more (practical)
+
+* Learn a functional programming language
+* https://www.youtube.com/watch?v=15X0qFtBqiQ[Functional Programming with Java 8 by Venkat Subramaniam]
+* https://medium.com/@johnmcclean[John McClean's Blog]
+* http://www.vavr.io/vavr-docs[VAVR Docs]
+
+[NOTE.speaker]
+--
+Haskell, Clojure, Scala, Elm, Exlir, R, Common Lisp, Scheme
+--

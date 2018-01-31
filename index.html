@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="author" content="Conor Restall"><title>Functional Programming and Java</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="reveal.js/css/reveal.css" rel="stylesheet"><link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme"><link href="reveal.js/lib/css/zenburn.css" rel="stylesheet"><script>var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? "reveal.js/css/print/pdf.css" : "reveal.js/css/print/paper.css";
+document.getElementsByTagName( 'head' )[0].appendChild( link );</script><!--[if lt IE 9]><script src="reveal.js/lib/js/html5shiv.js"></script><![endif]--></head><body><div class="reveal"><div class="slides"><section class="title" data-state="title"><h1>Functional Programming and Java</h1><p class="author"><small>Conor Restall</small></p></section><section id="intro"><h2>Intro</h2><div class="ulist"><ul><li><p>Ask questions as I go</p></li><li><p>If you are reading these slides press <code>S</code> to view my speaker notes.</p></li><li><p>Function Programming is a huge topic</p></li></ul></div>
+<aside class="notes"><div class="paragraph"><p>Very high level and brief</p></div>
+<div class="paragraph"><p>Teaching principles - could go into much more detail.</p></div>
+<div class="paragraph"><p>FP is huge,  thousands of languages and language features , I&#8217;m only going to touch on a couple of these</p></div>
+<div class="paragraph"><p>Java 8 made much of this feasible</p></div>
+<div class="paragraph"><p>I&#8217;m not going to talk about recursion - it&#8217;s common in lots of FP languages, but the JVM doesn&#8217;t offer tail call optimisation.</p></div>
+<div class="paragraph"><p>I&#8217;ll say some outlandish things - please shout up when I do</p></div>
+<div class="paragraph"><p>I&#8217;m going to try and stay away from category theory, but I will inevitably touch on it.
+You&#8217;ll find some people when they try to teach FP will talk in a very Mathematical way. f(x) applied to g(x,y)</p></div>
+<div class="paragraph"><p>Probably not going to teach you much that is directly applyable, I will hopefully provoke some thought</p></div></aside></section>
+<section id="imperative_programming"><h2>Imperative Programming</h2><div class="ulist"><ul><li><p>Before we start looking at FP lets have a very quick look at imperative programming.</p></li></ul></div>
+<div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">a = a + 1;</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>Imperative programming is lots about how.</p></div>
+<div class="paragraph"><p>a = a + 1</p></div>
+<div class="paragraph"><p>is probably the simplest thing you can do in imperative programming, and it&#8217;s ridiculously complex for what it is.
+Try explaining this to someone who has never programmed before.</p></div>
+<div class="paragraph"><p>equals(=) is not an equals sign, it&#8217;s assignment.</p></div>
+<div class="paragraph"><p>a is referenced twice in the same line and has 2 different meanings. It&#8217;s unintuitive</p></div>
+<div class="paragraph"><p>This doesn&#8217;t don&#8217;t have any effect until after it runs</p></div>
+<div class="paragraph"><p>Now stick this in a loop, our state is constantly changing and our locaton is constantly changing and we have to train our minds to be able to understand this</p></div>
+<div class="paragraph"><p>Who here has experienced an off by 1 error and has to manually write out each step of a loop</p></div>
+<div class="paragraph"><p>Imagine if we could take time out of out code.</p></div></aside></section>
+<section><section id="what_is_functional_programming"><h2>What is Functional Programming?</h2><div class="paragraph"><p>Process of building your software using "pure functions"</p></div><aside class="notes"><div class="paragraph"><p>Functional programming aims to complex solve problems by first decomposing the problem into smaller simpler problems solving these problems and recomposing these solutions.</p></div></aside></section><section id="pure_functions"><h2>Pure Functions</h2><div class="paragraph"><p>Pure functions are functions that don&#8217;t have side effects</p></div>
+<div class="paragraph"><p>Pure functions are functions that don&#8217;t:</p></div>
+<div class="ulist"><ul><li><p>Modify variables</p></li><li><p>Modify data structures in place</p></li><li><p>Throw exceptions</p></li><li><p>Print to the console or read user input</p></li><li><p>Read from or write to files</p></li></ul></div>
+<aside class="notes"><div class="paragraph"><p><strong>What are pure functions?</strong> - functions that always give the same answer given the same parameters</p></div>
+<div class="paragraph"><p>These are restrictions and add complexity, that&#8217;s why we want to get rid of them.</p></div>
+<div class="paragraph"><p>At this point you&#8217;re either thinking ah programming will be so easy without any of these annoying side effects, or you&#8217;re thinking how can we make anything useful without side effects.</p></div>
+<div class="paragraph"><p>Functional programming accepts these and different languages ways of managing side effects.</p></div>
+<div class="paragraph"><p>I just want to look at how we can make as much of our applications functional and push the side effects to the edges.</p></div>
+<div class="paragraph"><p>Preference for immutable data</p></div></aside></section></section>
+<section id="benefits_of_functional_programming"><h2>Benefits of Functional Programming</h2><div class="ulist"><ul><li><p>Less incidental Complexity</p></li><li><p>Easier to reason about</p></li><li><p>Innate Reusability via Composability</p></li><li><p>Easier Testing</p></li><li><p>Concurrency made easy</p></li><li><p>Less Errors</p></li><li><p>Easier to Debug (small area to debug, lower cognitive load)</p></li></ul></div>
+<aside class="notes"><div class="paragraph"><p>These are all pretty interelated</p></div>
+<div class="paragraph"><p>Complexity (there are 2 types of complexity incidental and inherent)</p></div>
+<div class="paragraph"><p>In OOP to make things extensible, dynamic and flexible you have to make them more complex
+You have to add something</p></div>
+<div class="paragraph"><p>In Functional programming things are inherently flexible
+Everything is a functional</p></div>
+<div class="paragraph"><p>Complexity has lots of cost, it&#8217;s hard to think about lots of things at once.</p></div>
+<div class="paragraph"><p>This is what things like the Single Responsibility Principle aim to address</p></div>
+<div class="paragraph"><p>You can&#8217;t rely only tests.
+If you want to make a change to a piece of software you have to go in an understand what already exists and be able to understand the impacts</p></div>
+<div class="paragraph"><p>Rich Hickey has a brilliant talk about complexity - go watch it</p></div></aside></section>
+<section><section id="immutability"><h2>Immutability</h2><div class="ulist"><ul><li><p>Item 17 In Josh Bloch&#8217;s Effective Java - Minimize Mutability</p></li><li><p>Removal of state (internal + external)</p></li><li><p>Simple</p></li><li><p>Sharable</p></li><li><p>Composable</p></li><li><p>Easier to reason about</p></li><li><p>More memory intensive</p></li></ul></div><aside class="notes"><div class="paragraph"><p>Java is not particularly friendly towards immutability.
+The only tool we are offered is final.</p></div>
+<div class="paragraph"><p>Josh Bloch is speaking about Immutable fields. FP takes this further and says nothing should be mutable.</p></div>
+<div class="paragraph"><p>FP takes this further - minimising assignment - getting rid of reassignment</p></div>
+<div class="paragraph"><p>Immutable values are simple, can be shared, easier to reason about, Composable</p></div>
+<div class="paragraph"><p>Take more memory, vast majority of the time this is negligible</p></div>
+<div class="paragraph"><p>Streams don&#8217;t create new lists every time you go through a step</p></div></aside></section><section id="persistent_data_structures"><h2>Persistent Data Structures</h2><div class="paragraph"><p>Default Collections are hard to make immutable and they are not well handled.
+E.G. Impossible to add to a collection in a immutable way using Java Collection Interface.</p></div>
+<div class="paragraph"><p>People have created "Persistent Data Structures"</p></div>
+<aside class="notes"><div class="paragraph"><p>What about Lists, Sets, Maps etc.. Making these immutable make them hard to work with and slow</p></div>
+<div class="paragraph"><p>Preserve the existing structures when mutations are made.</p></div></aside></section><section id="java_collections"><h2>Java Collections</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">public interface List&lt;T&gt; {
+
+  public boolean add(E element)
+
+  public E remove(E element)
+}</code></pre></div></div></section><section id="vavr_collections"><h2>VAVR Collections</h2><div class="paragraph"><p>O(Log<sub>32</sub>)</p></div>
+<div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">public interface List&lt;T&gt; {
+
+  public List&lt;T&gt; add(E element)
+
+  public List&lt;T&gt; remove(E element)
+}</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>Can have a dumb implementation that clones the entire structure. Really not efficent.</p></div>
+<div class="paragraph"><p>Smart implementations that run in  time (close enough to linear)</p></div>
+<div class="paragraph"><p>Some other implementations that offer slightly better performance at the cost of old collections.</p></div></aside></section></section>
+<section><section id="monads"><h2>Monads</h2><div class="ulist"><ul><li><p>A monad a set of three things:</p></li><li><p>a parameterized type M&lt;T&gt;</p></li><li><p>a “unit” function T &#8594; M&lt;T&gt;</p></li><li><p>a “bind” operation: M&lt;T&gt; bind T &#8594; U = M&lt;U&gt;</p></li></ul></div><aside class="notes"><div class="paragraph"><p>Many people have probably heard of monads and think their really confusing and scary, in fact they are simple ways of handling complex things.</p></div>
+<div class="paragraph"><p>You have a Type and want to express something about this T without changing the Type. E.G. You want to express that this thing may not exist, or that it may be invalid</p></div>
+<div class="paragraph"><p>Think of a monad as a wrapper that can respresent multiple stateas and some useful utilities</p></div>
+<div class="paragraph"><p>A "unit" is just a way of saying a way (or multiple ways) to create an instance of the Monad category theory</p></div>
+<div class="paragraph"><p>A "bind" is a transformation on the internal type</p></div>
+<div class="paragraph"><p>They usually have lots of other useful and lovely things like flatmap</p></div></aside></section><section id="optional"><h2>Optional</h2><div class="paragraph"><p>Probably the most common Monad in java</p></div>
+<aside class="notes"><div class="paragraph"><p>Parameterized type - Optional can take a type</p></div>
+<div class="paragraph"><p>unit = Optional::of</p></div>
+<div class="paragraph"><p>bind = Optional::map</p></div>
+<div class="paragraph"><p>Monad abstracts represent possible state</p></div></aside></section><section id="other_monads"><h2>Other Monads</h2><div class="ulist"><ul><li><p>Try</p></li><li><p>Lazy</p></li><li><p>Trampoline</p></li><li><p>Future</p></li></ul></div>
+<aside class="notes"><div class="paragraph"><p>Try - an alternative for checked exceptions, the contents is either</p></div>
+<div class="paragraph"><p>Lazy - Represent a value that may or may not have been calculated</p></div>
+<div class="paragraph"><p>Trampoline - a pretty complex one that is used as an alternative to recursion</p></div>
+<div class="paragraph"><p>Future - Represent a value that may or may not exist</p></div></aside></section></section>
+<section><section id="streams"><h2>Streams</h2><div class="paragraph"><p>Biggest new feature in Java 8</p></div><div class="paragraph"><p>Common loops can be extracted away</p></div><aside class="notes"><div class="paragraph"><p>Many functional languages have recursion to manage looping. Java lacks tail call optimisation so it&#8217;s not really feasible.</p></div></aside></section><section id="better_stream_libraries"><h2>Better stream libraries</h2><div class="ulist"><ul><li><p>VAVR</p></li><li><p>JOOλ (JOOL)</p></li></ul></div>
+<aside class="notes"><div class="paragraph"><p>There are some others</p></div>
+<div class="paragraph"><p>Offer more flexibility, support for Tuples, better fold, filter</p></div></aside></section><section id="lazy_evaluation"><h2>Lazy Evaluation</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">List&lt;Integer&gt; nums = Arrays.asList(1,2,3);
+
+int[] factor = new int[] {2}; // effectively final
+
+Stream&lt;Integer&gt; stream = nums.stream()
+  .map(n -&gt; n * factor[0]);
+
+factor[0] = 0;
+
+stream.forEach(System.out::println);</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>What will this print?
+0 0 0</p></div>
+<div class="paragraph"><p>If you don&#8217;t write the sout line IntelliJ will hint at you that the stream is never consumed</p></div>
+<div class="paragraph"><p>In fact native java streams are a bit funny about consumption and this makes some aspects of them hard to compose, underneath they are mutable collections.</p></div>
+<div class="paragraph"><p>Lazy Evaluation is a byproduct of using pure functions, most functional programming languages take advantages of that.
+E.G. Infinite collections</p></div></aside></section><section id="infinite_collections"><h2>Infinite Collections</h2><div class="paragraph"><p>I want the sum of the first 20 Fibonacci numbers</p></div>
+<div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">int sum = 2;
+int fibonacci = 1, fibo1 = 1, fibo2 = 1;
+for (int i = 3; i &lt;= 20; i++) {
+    fibonacci = fibo1 + fibo2;
+    fibo1 = fibo2;
+    fibo2 = fibonacci;
+    sum = sum + fibonacci;
+}</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>Imperatively we would write</p></div>
+<div class="paragraph"><p>We&#8217;re complecting how and what</p></div>
+<div class="paragraph"><p>This is really quite complex, we&#8217;re keeping track of a few different things.</p></div></aside></section><section id="declaratively_we_would_write"><h2>Declaratively we would write</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">// Using VAVR Streams
+  Stream.of(0, 1)
+        .appendSelf(self -&gt; self.zip(self.tail())
+        .map(t -&gt; t._1 + t._2));
+        .filter(20)
+        .sum();</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>VAVR
+Or Utils.fibonacci()
+        .filter(20)
+        .sum()</p></div>
+<div class="paragraph"><p>It is possible to hang yourself with this, create an infinite stream that goes forever.</p></div>
+<div class="paragraph"><p>After considering the declarative implementation we would probably decide to write a new method that generates our numbers for us.
+E.G. List&lt;Integer&gt; getFibonanacciNumbers(int length); But now we have 2 loops;</p></div></aside></section></section>
+<section><section id="first_class_functions"><h2>First Class Functions</h2><div class="paragraph"><p>Easier to manage from Java 8 onwards (but their just pretty anonymous classes)</p></div><aside class="notes"><div class="paragraph"><p>Ability to pass functions</p></div></aside></section><section id="comparable"><h2>Comparable</h2><div class="paragraph"><p>We have a list of Objects that we want to sort newest to oldest</p></div>
+<div class="paragraph"><p>Traditionally we would implement comparable.</p></div>
+<div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">public int compareTo(FlexibleConfigurations to) {
+  OffsetDateTime lhsDate = AuditHelper.getAuditDTM(this);
+  OffsetDateTime rhsDate = AuditHelper.getAuditDTM(to);
+  if (lhsDate.equals(rhsDate)) {
+    return AuditHelper.getAuditId(this).compareTo(AuditHelper.getAuditId(to));
+  } else {
+    return rhsDate.compareTo(lhsDate);
+  }
+}</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>Came across this one yesterday</p></div>
+<div class="paragraph"><p>Really good example of leveraging and composing functions</p></div>
+<div class="paragraph"><p>Something you can start doing today.</p></div></aside></section><section id="functional_implementation"><h2>Functional implementation</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="java language-java">list.sort(Comparator.comparing(AuditHelper::getAuditDTM)
+                    .reversed()
+                    .thenComparing(AuditHelper::getName)
+         );</code></pre></div></div>
+<aside class="notes"><div class="paragraph"><p>We are able to do this because the functions are pure</p></div></aside></section></section>
+<section id="feedback"><h2>Feedback</h2><div class="paragraph"><p>I would love some feedback</p></div></section>
+<section id="learn_more_theory"><h2>Learn more (theory)</h2><div class="ulist"><ul><li><p><a href="https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/">Category theory for Programmers</a></p></li><li><p><a href="https://mightybyte.github.io/monad-challenges/">Monad challenges</a></p></li><li><p><a href="http://hypirion.com/musings/understanding-persistent-vector-pt-1">Details on Persistent Data structures</a></p></li><li><p>Anything By Rich Hickey</p></li></ul></div></section>
+<section id="learn_more_practical"><h2>Learn more (practical)</h2><div class="ulist"><ul><li><p>Learn a functional programming language</p></li><li><p><a href="https://www.youtube.com/watch?v=15X0qFtBqiQ">Functional Programming with Java 8 by Venkat Subramaniam</a></p></li><li><p><a href="https://medium.com/@johnmcclean">John McClean&#8217;s Blog</a></p></li><li><p><a href="http://www.vavr.io/vavr-docs">VAVR Docs</a></p></li></ul></div>
+<aside class="notes"><div class="paragraph"><p>Haskell, Clojure, Scala, Elm, Exlir, R, Common Lisp, Scheme</p></div></aside></section></div></div><script src="reveal.js/lib/js/head.min.js"></script><script src="reveal.js/js/reveal.js"></script><script>// See https://github.com/hakimel/reveal.js#configuration for a full list of configuration options
+Reveal.initialize({
+  // Display controls in the bottom right corner
+  controls: true,
+  // Display a presentation progress bar
+  progress: true,
+  // Set a per-slide timing for speaker notes, null means none
+  defaultTiming: null,
+  // Display the page number of the current slide
+  slideNumber: false,
+  // Push each slide change to the browser history
+  history: true,
+  // Enable keyboard shortcuts for navigation
+  keyboard: true,
+  // Enable the slide overview mode
+  overview: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Loop the presentation
+  loop: false,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Randomizes the order of slides each time the presentation loads
+  shuffle: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Flags if we should show a help overlay when the questionmark
+  // key is pressed
+  help: true,
+  // Flags if speaker notes should be visible to all viewers
+  showNotes: false,
+  // Global override for autolaying embedded media (video/audio/iframe)
+  // - null: Media will only autoplay if data-autoplay is present
+  // - true: All media will autoplay, regardless of individual setting
+  // - false: No media will autoplay, regardless of individual setting
+  autoPlayMedia: null,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: false,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  previewLinks: false,
+  // Theme (e.g., beige, black, league, night, serif, simple, sky, solarized, white)
+  // NOTE setting the theme in the config no longer works in reveal.js 3.x
+  //theme: Reveal.getQueryHash().theme || 'beige',
+  // Transition style (e.g., none, fade, slide, convex, concave, zoom)
+  transition: Reveal.getQueryHash().transition || 'convex',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., none, fade, slide, convex, concave, zoom)
+  backgroundTransition: 'fade',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+
+  // The "normal" size of the presentation, aspect ratio will be preserved
+  // when the presentation is scaled to fit different resolutions. Can be
+  // specified using percentage units.
+  width: 960,
+  height: 700,
+
+  // Factor of the display size that should remain empty around the content
+  margin: 0.1,
+
+  // Bounds for smallest/largest possible scale to apply to content
+  minScale: 0.2,
+  maxScale: 1.5,
+
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+      { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      
+      { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true },
+      { src: 'reveal.js/plugin/notes/notes.js', async: true }
+  ]
+});</script></body></html>
